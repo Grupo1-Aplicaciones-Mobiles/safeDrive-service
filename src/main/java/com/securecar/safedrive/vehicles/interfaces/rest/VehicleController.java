@@ -1,6 +1,7 @@
 package com.securecar.safedrive.vehicles.interfaces.rest;
 
 import com.securecar.safedrive.vehicles.domain.model.aggregates.Vehicle;
+import com.securecar.safedrive.vehicles.domain.model.commands.DeleteVehicleCommand;
 import com.securecar.safedrive.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import com.securecar.safedrive.vehicles.domain.services.VehicleCommandService;
 import com.securecar.safedrive.vehicles.domain.services.VehicleQueryService;
@@ -39,5 +40,15 @@ public class VehicleController {
         Optional<Vehicle> vehicle = vehicleQueryService.handle(new GetVehicleByIdQuery(id));
         return vehicle.map(source -> ResponseEntity.ok(VehicleResourceFromEntityAssembler.toResourceFromEntity(source)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
+        try {
+            vehicleCommandService.handle(new DeleteVehicleCommand(id));
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
