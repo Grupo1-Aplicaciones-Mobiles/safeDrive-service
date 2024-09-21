@@ -1,5 +1,6 @@
 package com.securecar.safedrive.vehicles.domain.model.aggregates;
 
+import com.securecar.safedrive.iam.domain.model.aggregates.User;
 import com.securecar.safedrive.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.securecar.safedrive.vehicles.domain.model.commands.CreateVehicleCommand;
 import jakarta.persistence.*;
@@ -20,23 +21,28 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
 
     @NotBlank
     @Size(max = 50)
-    @Column(unique = true)
+    @Column
     private String marca;
 
     @NotBlank
     @Size(max = 50)
-    @Column(unique = true)
+    @Column
     private String modelo;
 
     @NotBlank
     @Size(max = 50)
-    @Column(unique = true)
+    @Column
     private String color;
 
     @NotBlank
     @Size(max = 50)
     @Column(unique = true)
     private String placa;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;  // Relación con el usuario
+
 
     //constructor de la clase
     public Vehicle(String marca, String modelo, String color, String placa) {

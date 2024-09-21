@@ -6,5 +6,6 @@ import com.securecar.safedrive.vehicles.domain.model.commands.CreateVehicleComma
 import java.util.Optional;
 
 public interface VehicleCommandService {
-    Optional<Vehicle> handle(CreateVehicleCommand createVehicleCommand);
+    Optional<Vehicle> handle(CreateVehicleCommand createVehicleCommand, String username);
+
 }

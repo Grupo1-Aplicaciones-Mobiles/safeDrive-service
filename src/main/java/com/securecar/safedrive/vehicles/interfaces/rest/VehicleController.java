@@ -11,6 +11,8 @@ import com.securecar.safedrive.vehicles.interfaces.rest.transform.VehicleResourc
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -27,17 +29,24 @@ public class VehicleController {
     }
 
     @PostMapping
-    public ResponseEntity<VehicleResource> createVehicle(@RequestBody CreateVehicleResource resource){
+    public ResponseEntity<VehicleResource> createVehicle(@RequestBody CreateVehicleResource resource, Principal principal){
+        String username = principal.getName(); // Obtenemos el nombre del usuario autenticado
         Optional<Vehicle> vehicle = vehicleCommandService
-                .handle(CreateVehicleCommandFromResourceAssembler.toCommandFromResource(resource));
+                .handle(CreateVehicleCommandFromResourceAssembler.toCommandFromResource(resource), username);
         return vehicle.map(source -> new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(source),CREATED))
                 .orElseGet(()->ResponseEntity.badRequest().build());
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<VehicleResource> getVehicleById(@PathVariable Long id){
-        Optional<Vehicle> vehicle = vehicleQueryService.handle(new GetVehicleByIdQuery(id));
-        return vehicle.map(source -> ResponseEntity.ok(VehicleResourceFromEntityAssembler.toResourceFromEntity(source)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+//    @GetMapping("{id}")
+//    public ResponseEntity<VehicleResource> getVehicleById(@PathVariable Long id){
+//        Optional<Vehicle> vehicle = vehicleQueryService.handle(new GetVehicleByIdQuery(id));
+//        return vehicle.map(source -> ResponseEntity.ok(VehicleResourceFromEntityAssembler.toResourceFromEntity(source)))
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+    @GetMapping
+    public ResponseEntity<List<VehicleResource>> getVehiclesByUser(Principal principal) {
+        String username = principal.getName(); // Obtenemos el nombre del usuario autenticado
+        List<Vehicle> vehicles = vehicleQueryService.getVehiclesByUser(username);
+        return ResponseEntity.ok(vehicles.stream().map(VehicleResourceFromEntityAssembler::toResourceFromEntity).toList());
     }
 }

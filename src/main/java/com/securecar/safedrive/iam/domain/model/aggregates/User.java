@@ -2,6 +2,7 @@ package com.securecar.safedrive.iam.domain.model.aggregates;
 
 import com.securecar.safedrive.iam.domain.model.entities.Role;
 import com.securecar.safedrive.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import com.securecar.safedrive.vehicles.domain.model.aggregates.Vehicle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -35,6 +36,15 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     @NotBlank
     @Size(max = 50)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Vehicle> vehicles = new HashSet<>();
+
+    // Método para agregar un vehículo al usuario
+    public void addVehicle(Vehicle vehicle) {
+        vehicles.add(vehicle);
+        vehicle.setUser(this);  // Asegurar que el vehículo conoce a su propietario
+    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(	name = "user_roles",
