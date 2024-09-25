@@ -8,6 +8,7 @@ import com.securecar.safedrive.iam.domain.model.commands.SignUpCommand;
 import com.securecar.safedrive.iam.domain.services.UserCommandService;
 import com.securecar.safedrive.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import com.securecar.safedrive.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import com.securecar.safedrive.shared.domain.model.aggregates.valueobjects.Coordinates;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     }
 
-
-
     /**
      * Handle the sign-in command
      * <p>
@@ -52,7 +51,7 @@ public class UserCommandServiceImpl implements UserCommandService {
      * @throws RuntimeException if the user is not found or the password is invalid
      */
     @Override
-    public Optional<ImmutablePair<User, String>> handle(SignInCommand command){
+    public Optional<ImmutablePair<User, String>> handle(SignInCommand command) {
 
         var user = userRepository.findByUsername(command.username());
 
@@ -61,11 +60,10 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         if(!hashingService.matches(command.password(), user.get().getPassword()))
             throw new RuntimeException("Invalid password");
+
         var token = tokenService.generateToken(user.get().getUsername());
         return Optional.of(ImmutablePair.of(user.get(), token));
-
     }
-
 
     /**
      * Handle the sign-up command
@@ -75,7 +73,6 @@ public class UserCommandServiceImpl implements UserCommandService {
      * @param command the sign-up command containing the username and password
      * @return an optional containing the created user
      */
-
     @Override
     public Optional<User> handle(SignUpCommand command) {
         if(userRepository.existsByUsername(command.username())) {
@@ -84,11 +81,30 @@ public class UserCommandServiceImpl implements UserCommandService {
         var roles = command.roles().stream().
                 map(role -> roleRepository.findByName(role.getName()).orElseThrow(() -> new RuntimeException("Role not found"))).
                 toList();
-        var user = new User(command.username(), hashingService.encode(command.password()), command.phoneNumber(),roles);
+        var user = new User(command.username(), hashingService.encode(command.password()), command.phoneNumber(), (Coordinates) roles);
         userRepository.save(user);
 
         return userRepository.findByUsername(command.username());
-
     }
-}
 
+    /**
+     * Update the user's coordinates (latitude and longitude)
+     * <p>
+     *     This method updates the coordinates (latitude, longitude) of a user.
+     * </p>
+     * @param userId the ID of the user
+     * @param latitude the new latitude
+     * @param longitude the new longitude
+     */
+    public void updateUserCoordinates(Long userId, double latitude, double longitude) {
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Actualizar las coordenadas del usuario
+        user.updateCoordinates(latitude, longitude);
+
+        // Guardar los cambios en el repositorio
+        userRepository.save(user);
+    }
+
+}

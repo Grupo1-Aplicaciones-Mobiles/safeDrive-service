@@ -2,6 +2,7 @@ package com.securecar.safedrive.iam.domain.model.aggregates;
 
 import com.securecar.safedrive.iam.domain.model.entities.Role;
 import com.securecar.safedrive.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import com.securecar.safedrive.shared.domain.model.aggregates.valueobjects.Coordinates;
 import com.securecar.safedrive.vehicles.domain.model.aggregates.Vehicle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -37,6 +38,10 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     @Size(max = 50)
     private String phoneNumber;
 
+    @Embedded
+    private Coordinates coordinates;
+
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Vehicle> vehicles = new HashSet<>();
 
@@ -62,9 +67,25 @@ public class User extends AuditableAbstractAggregateRoot<User> {
         this.roles = new HashSet<>();
     }
 
-    public User(String username, String password, String phoneNumber ,List<Role> roles) {
-        this(username, password, phoneNumber    );
+    public User(String username, String password, String phoneNumber, Coordinates coordinates) {
+        this(username, password, phoneNumber);
+        this.coordinates = coordinates;
+    }
+
+    public User(String username, String password, String phoneNumber, Coordinates coordinates, List<Role> roles) {
+        this(username, password, phoneNumber, coordinates);
         addRoles(roles);
+    }
+
+
+
+    /**
+     * Update the coordinates of the user
+     * @param latitude the new latitude
+     * @param longitude the new longitude
+     */
+    public void updateCoordinates(double latitude, double longitude) {
+        this.coordinates = new Coordinates(latitude, longitude);
     }
 
     /**
