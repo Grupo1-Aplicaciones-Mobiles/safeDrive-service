@@ -45,4 +45,16 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
 
         return Optional.of(vehicleRepository.save(vehicle));
     }
+
+    public void updateVehicleCoordinates(Long vehicleId, double latitude, double longitude) {
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+        // Actualizar las coordenadas del vehículo
+        vehicle.updateCoordinates(latitude, longitude);
+
+        // Guardar los cambios en el repositorio
+        vehicleRepository.save(vehicle);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.securecar.safedrive.vehicles.domain.model.aggregates;
 
 import com.securecar.safedrive.iam.domain.model.aggregates.User;
 import com.securecar.safedrive.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import com.securecar.safedrive.shared.domain.model.aggregates.valueobjects.Coordinates;
 import com.securecar.safedrive.vehicles.domain.model.commands.CreateVehicleCommand;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -43,6 +44,9 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
     @JoinColumn(name = "user_id")
     private User user;  // Relación con el usuario
 
+    @Embedded
+    private Coordinates coordinates;
+
 
     //constructor de la clase
     public Vehicle(String marca, String modelo, String color, String placa) {
@@ -58,10 +62,13 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
         this.modelo = createVehicleCommand.modelo();
         this.color = createVehicleCommand.color();
         this.placa = createVehicleCommand.placa();
-
     }
 
     public Vehicle() {
 
+    }
+
+    public void updateCoordinates(double latitude, double longitude) {
+        this.coordinates = new Coordinates(latitude, longitude);
     }
 }
