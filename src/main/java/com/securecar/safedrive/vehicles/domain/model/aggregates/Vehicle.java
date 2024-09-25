@@ -68,6 +68,13 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
 
     }
 
+    public Vehicle updateInformation(String marca, String modelo, String color, String placa) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.color = color;
+        this.placa = placa;
+        return this;
+
     public void updateCoordinates(double latitude, double longitude) {
         this.coordinates = new Coordinates(latitude, longitude);
     }

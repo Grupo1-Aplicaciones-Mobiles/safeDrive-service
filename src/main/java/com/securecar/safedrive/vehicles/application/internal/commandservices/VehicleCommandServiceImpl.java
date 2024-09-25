@@ -4,6 +4,7 @@ import com.securecar.safedrive.iam.domain.model.aggregates.User;
 import com.securecar.safedrive.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.securecar.safedrive.vehicles.domain.model.aggregates.Vehicle;
 import com.securecar.safedrive.vehicles.domain.model.commands.CreateVehicleCommand;
+import com.securecar.safedrive.vehicles.domain.model.commands.UpdateVehicleCommand;
 import com.securecar.safedrive.vehicles.domain.services.VehicleCommandService;
 import com.securecar.safedrive.vehicles.infrastructure.persistence.jpa.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,40 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
         return Optional.of(vehicleRepository.save(vehicle));
     }
 
+    @Override
+    public Optional<Vehicle> handle(UpdateVehicleCommand command) {
+        validateUpdateVehicleCommand(command);
+        var result = vehicleRepository.findById(command.id());
+        if (result.isEmpty()) {
+            throw new IllegalArgumentException("Vehicle does not exist");
+        }
+        var vehicleToUpdate = result.get();
+        try {
+            var updatedVehicle = vehicleRepository.save(vehicleToUpdate.updateInformation(command.marca(), command.modelo(), command.color(), command.placa()));
+            return Optional.of(updatedVehicle);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error while updating vehicle: " + e.getMessage());
+        }
+    }
+
+    void validateUpdateVehicleCommand(UpdateVehicleCommand command) {
+        if (command.id() == null) {
+            throw new IllegalArgumentException("Vehicle id is required");
+        }
+        if (command.marca() == null) {
+            throw new IllegalArgumentException("Vehicle marca is required");
+        }
+        if (command.modelo() == null) {
+            throw new IllegalArgumentException("Vehicle modelo is required");
+        }
+        if (command.color() == null) {
+            throw new IllegalArgumentException("Vehicle color is required");
+        }
+        if (command.placa() == null) {
+            throw new IllegalArgumentException("Vehicle placa is required");
+        }
+    }
+
     public void updateVehicleCoordinates(Long vehicleId, double latitude, double longitude) {
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new RuntimeException("Vehicle not found"));
@@ -56,5 +91,4 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
         // Guardar los cambios en el repositorio
         vehicleRepository.save(vehicle);
     }
-
 }
