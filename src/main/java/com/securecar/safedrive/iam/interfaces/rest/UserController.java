@@ -1,17 +1,17 @@
 package com.securecar.safedrive.iam.interfaces.rest;
 
+import com.securecar.safedrive.iam.application.internal.commandservices.UserCommandServiceImpl;
 import com.securecar.safedrive.iam.domain.model.queries.GetAllUsersQuery;
 import com.securecar.safedrive.iam.domain.model.queries.GetUserByIdQuery;
 import com.securecar.safedrive.iam.domain.services.UserQueryService;
 import com.securecar.safedrive.iam.interfaces.rest.resources.UserResource;
+import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.UpdateCoordinatesDTO;
 import com.securecar.safedrive.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,9 +21,15 @@ import java.util.List;
 public class UserController {
 
     private final UserQueryService userQueryService;
-    public UserController(UserQueryService userQueryService) {
+    private final UserCommandServiceImpl userCommandService;
+
+    public UserController(UserQueryService userQueryService, UserCommandServiceImpl userCommandService) {
         this.userQueryService = userQueryService;
+        this.userCommandService = userCommandService;
     }
+
+
+
 
 
 
@@ -60,6 +66,23 @@ public class UserController {
                 UserResourceFromEntityAssembler.toResourceFromEntity(user.get())
         );
 
+    }
+
+
+    /**
+     * Endpoint to update the user's coordinates
+     * @param updateCoordinatesDTO contains the userId, latitude, and longitude
+     * @return HTTP 200 OK if the update is successful
+     */
+    @PutMapping("/coordinates")
+    public ResponseEntity<Void> updateCoordinates(@Valid @RequestBody UpdateCoordinatesDTO updateCoordinatesDTO) {
+        userCommandService.updateUserCoordinates(
+                updateCoordinatesDTO.getUserId(),
+                updateCoordinatesDTO.getLatitude(),
+                updateCoordinatesDTO.getLongitude()
+        );
+
+        return ResponseEntity.ok().build();
     }
 
 }
