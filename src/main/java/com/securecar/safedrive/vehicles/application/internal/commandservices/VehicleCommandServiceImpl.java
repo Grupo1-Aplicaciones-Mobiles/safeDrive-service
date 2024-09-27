@@ -4,6 +4,7 @@ import com.securecar.safedrive.iam.domain.model.aggregates.User;
 import com.securecar.safedrive.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.securecar.safedrive.vehicles.domain.model.aggregates.Vehicle;
 import com.securecar.safedrive.vehicles.domain.model.commands.CreateVehicleCommand;
+import com.securecar.safedrive.vehicles.domain.model.commands.DeleteVehicleCommand;
 import com.securecar.safedrive.vehicles.domain.model.commands.UpdateVehicleCommand;
 import com.securecar.safedrive.vehicles.domain.services.VehicleCommandService;
 import com.securecar.safedrive.vehicles.infrastructure.persistence.jpa.VehicleRepository;
@@ -90,6 +91,16 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
 
         // Guardar los cambios en el repositorio
         vehicleRepository.save(vehicle);
+    }
+
+    @Override
+    public void handle(DeleteVehicleCommand command) {
+        Optional<Vehicle> vehicle = vehicleRepository.findById(command.id());
+        if (vehicle.isPresent()) {
+            vehicleRepository.delete(vehicle.get());
+        } else {
+            throw new IllegalArgumentException("Vehicle with ID " + command.id() + " not found");
+        }
     }
 
 }
