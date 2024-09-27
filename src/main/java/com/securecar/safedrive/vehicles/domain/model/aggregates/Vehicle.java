@@ -40,6 +40,10 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
     @Column(unique = true)
     private String placa;
 
+    @NotBlank
+    @Column
+    private String imageUri;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;  // Relación con el usuario
@@ -49,11 +53,12 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
 
 
     //constructor de la clase
-    public Vehicle(String marca, String modelo, String color, String placa) {
+    public Vehicle(String marca, String modelo, String color, String placa, String imageUri) {
         this.marca = marca;
         this.modelo = modelo;
         this.color = color;
         this.placa = placa;
+        this.imageUri = imageUri;
     }
 
 
@@ -62,17 +67,19 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
         this.modelo = createVehicleCommand.modelo();
         this.color = createVehicleCommand.color();
         this.placa = createVehicleCommand.placa();
+        this.imageUri = createVehicleCommand.imageUri();
     }
 
     public Vehicle() {
 
     }
 
-    public Vehicle updateInformation(String marca, String modelo, String color, String placa) {
+    public Vehicle updateInformation(String marca, String modelo, String color, String placa, String imageUri) {
         this.marca = marca;
         this.modelo = modelo;
         this.color = color;
         this.placa = placa;
+        this.imageUri = imageUri;
         return this;
     }
 

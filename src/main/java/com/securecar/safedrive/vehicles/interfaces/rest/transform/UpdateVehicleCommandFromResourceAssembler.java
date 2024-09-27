@@ -10,7 +10,8 @@ public class UpdateVehicleCommandFromResourceAssembler {
             resource.marca(),
             resource.modelo(),
             resource.color(),
-            resource.placa()
+            resource.placa(),
+            resource.imageUri()
         );
     }
 }

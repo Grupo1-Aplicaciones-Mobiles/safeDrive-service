@@ -5,6 +5,6 @@ import com.securecar.safedrive.vehicles.interfaces.rest.resources.CreateVehicleR
 
 public class CreateVehicleCommandFromResourceAssembler {
     public static CreateVehicleCommand toCommandFromResource(CreateVehicleResource resource) {
-        return new CreateVehicleCommand(resource.marca(), resource.modelo(), resource.color(), resource.placa());
+        return new CreateVehicleCommand(resource.marca(), resource.modelo(), resource.color(), resource.placa(), resource.imageUri());
     }
 }

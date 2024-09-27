@@ -1,6 +1,6 @@
 package com.securecar.safedrive.vehicles.domain.model.commands;
 
-public record CreateVehicleCommand( String marca, String modelo, String color, String placa) {
+public record CreateVehicleCommand( String marca, String modelo, String color, String placa, String imageUri) {
 
     public CreateVehicleCommand {
         if (marca == null || marca.isEmpty())
@@ -11,6 +11,8 @@ public record CreateVehicleCommand( String marca, String modelo, String color, S
             throw new IllegalArgumentException("Color cannot be null or empty");
         if (placa == null || placa.isEmpty())
             throw new IllegalArgumentException("Placa cannot be null or empty");
+        if(imageUri == null || imageUri.isEmpty())
+            throw new IllegalArgumentException("ImageUri cannot be null or empty");
 
     }
 

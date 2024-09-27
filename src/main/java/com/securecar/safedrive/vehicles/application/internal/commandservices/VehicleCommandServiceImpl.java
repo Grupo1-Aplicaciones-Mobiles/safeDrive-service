@@ -57,7 +57,7 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
         }
         var vehicleToUpdate = result.get();
         try {
-            var updatedVehicle = vehicleRepository.save(vehicleToUpdate.updateInformation(command.marca(), command.modelo(), command.color(), command.placa()));
+            var updatedVehicle = vehicleRepository.save(vehicleToUpdate.updateInformation(command.marca(), command.modelo(), command.color(), command.placa(), command.imageUri()));
             return Optional.of(updatedVehicle);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while updating vehicle: " + e.getMessage());
@@ -79,6 +79,9 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
         }
         if (command.placa() == null) {
             throw new IllegalArgumentException("Vehicle placa is required");
+        }
+        if (command.imageUri() == null) {
+            throw new IllegalArgumentException("Vehicle imageUri is required");
         }
     }
 
