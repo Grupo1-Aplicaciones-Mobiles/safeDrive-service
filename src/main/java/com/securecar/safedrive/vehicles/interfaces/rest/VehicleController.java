@@ -81,4 +81,6 @@ public class VehicleController {
         var vehicleResource = VehicleResourceFromEntityAssembler.toResourceFromEntity(updatedVehicle.get());
         return ResponseEntity.ok(vehicleResource);
     }
+
+
 }

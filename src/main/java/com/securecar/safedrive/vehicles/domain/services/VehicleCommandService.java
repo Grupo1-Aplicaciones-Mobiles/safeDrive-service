@@ -11,4 +11,5 @@ public interface VehicleCommandService {
 
     Optional<Vehicle> handle(CreateVehicleCommand createVehicleCommand, String username);
 
+
 }

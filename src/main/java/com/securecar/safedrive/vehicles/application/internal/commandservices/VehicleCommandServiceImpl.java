@@ -91,4 +91,5 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
         // Guardar los cambios en el repositorio
         vehicleRepository.save(vehicle);
     }
+
 }
