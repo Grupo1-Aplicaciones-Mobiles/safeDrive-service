@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
-@RequestMapping("/api/vehicles")
+@RequestMapping("/api/v1/vehicles")
 public class VehicleController {
     private final VehicleCommandService vehicleCommandService;
     private final VehicleQueryService vehicleQueryService;
@@ -38,7 +38,7 @@ public class VehicleController {
 
     @PostMapping
     public ResponseEntity<VehicleResource> createVehicle(@RequestBody CreateVehicleResource resource, Principal principal){
-        String username = principal.getName(); // Obtenemos el nombre del usuario autenticado
+        String username = principal.getName();
         Optional<Vehicle> vehicle = vehicleCommandService
                 .handle(CreateVehicleCommandFromResourceAssembler.toCommandFromResource(resource), username);
         return vehicle.map(source -> new ResponseEntity<>(VehicleResourceFromEntityAssembler.toResourceFromEntity(source),CREATED))
