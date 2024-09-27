@@ -74,6 +74,7 @@ public class Vehicle extends AuditableAbstractAggregateRoot<Vehicle> {
         this.color = color;
         this.placa = placa;
         return this;
+    }
 
     public void updateCoordinates(double latitude, double longitude) {
         this.coordinates = new Coordinates(latitude, longitude);
