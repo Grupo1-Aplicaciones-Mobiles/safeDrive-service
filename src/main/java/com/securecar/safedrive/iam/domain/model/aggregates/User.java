@@ -27,6 +27,10 @@ public class User extends AuditableAbstractAggregateRoot<User> {
 
     @NotBlank
     @Size(max = 50)
+    private String name;
+
+    @NotBlank
+    @Size(max = 50)
     @Column(unique = true)
     private String username;
 
@@ -37,6 +41,9 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     @NotBlank
     @Size(max = 50)
     private String phoneNumber;
+
+    @Size(max = 255)
+    private String imageUrl;
 
     @Embedded
     private Coordinates coordinates;
@@ -60,20 +67,22 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     public User() {
         this.roles = new HashSet<>();
     }
-    public User(String username, String password, String phoneNumber) {
+    public User(String name, String username, String password, String phoneNumber) {
+        this.name = name;
         this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.roles = new HashSet<>();
     }
 
-    public User(String username, String password, String phoneNumber, Coordinates coordinates) {
-        this(username, password, phoneNumber);
+    public User(String name, String username, String password, String phoneNumber, String imageUrl,Coordinates coordinates) {
+        this(name, username, password, phoneNumber);
         this.coordinates = coordinates;
+        this.imageUrl = imageUrl;
     }
 
-    public User(String username, String password, String phoneNumber, Coordinates coordinates, List<Role> roles) {
-        this(username, password, phoneNumber, coordinates);
+    public User(String name, String username, String password, String phoneNumber, String imageUrl ,Coordinates coordinates, List<Role> roles) {
+        this(name, username, password, phoneNumber, imageUrl,coordinates);
         addRoles(roles);
     }
 
@@ -87,6 +96,18 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     public void updateCoordinates(double latitude, double longitude) {
         this.coordinates = new Coordinates(latitude, longitude);
     }
+
+    public void updateUser(String name, String username, String phoneNumber) {
+        this.name = name;
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+
 
     /**
      * Add a role to the user

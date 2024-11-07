@@ -6,6 +6,8 @@ import com.securecar.safedrive.iam.domain.model.queries.GetUserByIdQuery;
 import com.securecar.safedrive.iam.domain.services.UserQueryService;
 import com.securecar.safedrive.iam.interfaces.rest.resources.UserResource;
 import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.UpdateCoordinatesDTO;
+import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.UpdateImageUrlDTO;
+import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.UpdateUserDTO;
 import com.securecar.safedrive.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,9 +29,6 @@ public class UserController {
         this.userQueryService = userQueryService;
         this.userCommandService = userCommandService;
     }
-
-
-
 
 
 
@@ -84,5 +83,31 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/update/image")
+    public ResponseEntity<Void> updateImage(@Valid @RequestBody UpdateImageUrlDTO updateImageDTO) {
+        userCommandService.updateUserImageUrl(
+                updateImageDTO.getUserId(),
+                updateImageDTO.getImageUrl()
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update/details")
+    public ResponseEntity<Void> updateUserDetails(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
+        userCommandService.updateUserInfo(
+                updateUserDTO.getUserId(),
+                updateUserDTO.getName(),
+                updateUserDTO.getUsername(),
+                updateUserDTO.getPhoneNumber()
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
 
 }

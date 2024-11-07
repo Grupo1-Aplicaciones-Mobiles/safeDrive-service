@@ -81,7 +81,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         var roles = command.roles().stream().
                 map(role -> roleRepository.findByName(role.getName()).orElseThrow(() -> new RuntimeException("Role not found"))).
                 toList();
-        var user = new User(command.username(), hashingService.encode(command.password()), command.phoneNumber(),  new Coordinates(0, 0), roles);
+        var user = new User(command.name() ,command.username(), hashingService.encode(command.password()), command.phoneNumber(),command.imageUrl() ,new Coordinates(0, 0), roles);
         userRepository.save(user);
 
         return userRepository.findByUsername(command.username());
@@ -102,6 +102,46 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // Actualizar las coordenadas del usuario
         user.updateCoordinates(latitude, longitude);
+
+        // Guardar los cambios en el repositorio
+        userRepository.save(user);
+    }
+
+    /**
+     * Update the user's image URL
+     * <p>
+     *     This method updates the image URL of a user.
+     * </p>
+     * @param userId the ID of the user
+     * @param imageUrl the new image URL
+     */
+    public void updateUserImageUrl(Long userId, String imageUrl) {
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Actualizar la URL de la imagen del usuario
+        user.updateImageUrl(imageUrl);
+
+        // Guardar los cambios en el repositorio
+        userRepository.save(user);
+    }
+
+    /**
+     * Update the user's information
+     * <p>
+     *     This method updates the information of a user.
+     * </p>
+     * @param userId the ID of the user
+     * @param name the new name
+     * @param username the new username
+     * @param phoneNumber the new phone number
+     */
+    public void updateUserInfo(Long userId, String name, String username, String phoneNumber) {
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Actualizar la información del usuario
+        user.updateUser(name, username, phoneNumber);
 
         // Guardar los cambios en el repositorio
         userRepository.save(user);
