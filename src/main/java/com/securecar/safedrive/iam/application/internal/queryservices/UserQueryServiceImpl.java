@@ -2,10 +2,12 @@ package com.securecar.safedrive.iam.application.internal.queryservices;
 
 import com.securecar.safedrive.iam.domain.model.aggregates.User;
 import com.securecar.safedrive.iam.domain.model.queries.GetAllUsersQuery;
+import com.securecar.safedrive.iam.domain.model.queries.GetCoordinatesByUserIdQuery;
 import com.securecar.safedrive.iam.domain.model.queries.GetUserByIdQuery;
 import com.securecar.safedrive.iam.domain.model.queries.GetUserByUsernameQuery;
 import com.securecar.safedrive.iam.domain.services.UserQueryService;
 import com.securecar.safedrive.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import com.securecar.safedrive.shared.domain.model.aggregates.valueobjects.Coordinates;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,6 +62,12 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public Optional<User> handle(GetUserByUsernameQuery query) {
         return userRepository.findByUsername(query.username());
+    }
+
+    @Override
+    public Optional<Coordinates> handle(GetCoordinatesByUserIdQuery query) {
+        return userRepository.findById(query.getUserId())
+                .map(User::getCoordinates);
     }
 
 }
