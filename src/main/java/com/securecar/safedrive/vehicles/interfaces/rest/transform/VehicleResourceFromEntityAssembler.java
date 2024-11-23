@@ -5,6 +5,6 @@ import com.securecar.safedrive.vehicles.interfaces.rest.resources.VehicleResourc
 
 public class VehicleResourceFromEntityAssembler {
     public static VehicleResource toResourceFromEntity(Vehicle vehicle) {
-        return new VehicleResource(vehicle.getId(), vehicle.getMarca(), vehicle.getModelo(), vehicle.getColor(), vehicle.getPlaca(), vehicle.getImageUri(), vehicle.getCoordinates().getLatitude(), vehicle.getCoordinates().getLongitude());
+        return new VehicleResource(vehicle.getId(), vehicle.getMarca(), vehicle.getModelo(), vehicle.getColor(), vehicle.getPlaca(), vehicle.getImageUri());
     }
 }
