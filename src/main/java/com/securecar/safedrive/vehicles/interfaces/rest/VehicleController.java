@@ -2,12 +2,14 @@ package com.securecar.safedrive.vehicles.interfaces.rest;
 
 import com.securecar.safedrive.vehicles.domain.model.aggregates.Vehicle;
 import com.securecar.safedrive.vehicles.domain.model.commands.DeleteVehicleCommand;
+import com.securecar.safedrive.vehicles.domain.model.queries.GetCoordinatesByVehicleIdQuery;
 import com.securecar.safedrive.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import com.securecar.safedrive.vehicles.domain.services.VehicleCommandService;
 import com.securecar.safedrive.vehicles.domain.services.VehicleQueryService;
 import com.securecar.safedrive.vehicles.interfaces.rest.resources.CreateVehicleResource;
 import com.securecar.safedrive.vehicles.interfaces.rest.resources.UpdateVehicleResource;
 import com.securecar.safedrive.vehicles.interfaces.rest.resources.VehicleResource;
+import com.securecar.safedrive.vehicles.interfaces.rest.resources.dtos.CoordinatesDTO;
 import com.securecar.safedrive.vehicles.interfaces.rest.resources.dtos.UpdateVehicleCoordinatesDTO;
 import com.securecar.safedrive.vehicles.interfaces.rest.transform.CreateVehicleCommandFromResourceAssembler;
 import com.securecar.safedrive.vehicles.interfaces.rest.transform.UpdateVehicleCommandFromResourceAssembler;
@@ -56,6 +58,12 @@ public class VehicleController {
         String username = principal.getName(); // Obtenemos el nombre del usuario autenticado
         List<Vehicle> vehicles = vehicleQueryService.getVehiclesByUser(username);
         return ResponseEntity.ok(vehicles.stream().map(VehicleResourceFromEntityAssembler::toResourceFromEntity).toList());
+    }
+
+    @GetMapping("/{vehicleId}/coordinates")
+    public Optional<CoordinatesDTO> getVehicleCoordinates(@PathVariable Long vehicleId) {
+        return vehicleQueryService.handle(new GetCoordinatesByVehicleIdQuery(vehicleId))
+                .map(coordinates -> new CoordinatesDTO(coordinates.getLatitude(), coordinates.getLongitude()));
     }
 
     /**

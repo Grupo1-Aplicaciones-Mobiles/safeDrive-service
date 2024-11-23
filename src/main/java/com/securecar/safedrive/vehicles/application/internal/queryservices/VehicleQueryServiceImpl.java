@@ -2,7 +2,9 @@ package com.securecar.safedrive.vehicles.application.internal.queryservices;
 
 import com.securecar.safedrive.iam.domain.model.aggregates.User;
 import com.securecar.safedrive.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import com.securecar.safedrive.shared.domain.model.aggregates.valueobjects.Coordinates;
 import com.securecar.safedrive.vehicles.domain.model.aggregates.Vehicle;
+import com.securecar.safedrive.vehicles.domain.model.queries.GetCoordinatesByVehicleIdQuery;
 import com.securecar.safedrive.vehicles.domain.model.queries.GetVehicleByIdQuery;
 import com.securecar.safedrive.vehicles.domain.services.VehicleQueryService;
 import com.securecar.safedrive.vehicles.infrastructure.persistence.jpa.VehicleRepository;
@@ -39,4 +41,11 @@ public class VehicleQueryServiceImpl implements VehicleQueryService {
 
         return vehicleRepository.findByUser(user);  // Buscar vehículos asociados al usuario
     }
+
+    @Override
+    public Optional<Coordinates> handle(GetCoordinatesByVehicleIdQuery query) {
+        return vehicleRepository.findById(query.getVehicleId())
+                .map(Vehicle::getCoordinates);
+    }
+
 }

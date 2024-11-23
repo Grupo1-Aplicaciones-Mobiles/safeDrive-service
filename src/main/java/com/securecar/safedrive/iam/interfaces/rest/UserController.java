@@ -2,9 +2,11 @@ package com.securecar.safedrive.iam.interfaces.rest;
 
 import com.securecar.safedrive.iam.application.internal.commandservices.UserCommandServiceImpl;
 import com.securecar.safedrive.iam.domain.model.queries.GetAllUsersQuery;
+import com.securecar.safedrive.iam.domain.model.queries.GetCoordinatesByUserIdQuery;
 import com.securecar.safedrive.iam.domain.model.queries.GetUserByIdQuery;
 import com.securecar.safedrive.iam.domain.services.UserQueryService;
 import com.securecar.safedrive.iam.interfaces.rest.resources.UserResource;
+import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.CoordinatesDTO;
 import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.UpdateCoordinatesDTO;
 import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.UpdateImageUrlDTO;
 import com.securecar.safedrive.iam.interfaces.rest.resources.dtos.UpdateUserDTO;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,6 +68,12 @@ public class UserController {
                 UserResourceFromEntityAssembler.toResourceFromEntity(user.get())
         );
 
+    }
+
+    @GetMapping("/{userId}/coordinates")
+    public Optional<CoordinatesDTO> getUserCoordinates(@PathVariable Long userId) {
+        return userQueryService.handle(new GetCoordinatesByUserIdQuery(userId))
+                .map(coordinates -> new CoordinatesDTO(coordinates.getLatitude(), coordinates.getLongitude()));
     }
 
 
